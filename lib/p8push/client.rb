@@ -8,7 +8,8 @@ module P8push
   APPLE_DEVELOPMENT_JWT_URI = 'https://api.development.push.apple.com'
 
   class Client
-    attr_accessor :jwt_uri
+    attr_accessor :jwt_uri, :private_key, :team_id, :key_id, :timeout
+
     class << self
       def development
         client = self.new
@@ -24,7 +25,12 @@ module P8push
     end
 
     def initialize
-      @private_key = File.read(ENV['APN_PRIVATE_KEY'])
+      if ENV['APN_PRIVATE_KEY'].present?
+        @private_key = File.read(ENV['APN_PRIVATE_KEY'])
+      else
+        @private_key = nil
+      end
+
       @team_id = ENV['APN_TEAM_ID']
       @key_id = ENV['APN_KEY_ID']
       @timeout = Float(ENV['APN_TIMEOUT'] || 2.0)
